@@ -23,6 +23,7 @@ export default class Category extends Model {
       sequelize,
       modelName: 'Category',
     });
+    
     return this;
   }
 }
