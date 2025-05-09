@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 
 export default class Category extends Model {
   static init(sequelize){
-    super.init({
+    super.init( {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -12,10 +12,7 @@ export default class Category extends Model {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {          
-          notEmpty:{
-            msg: "O nome da categoria não pode ser vazio",
-          },
+        validate: {
           len: {
             args: [3, 255],
             msg: "O nome da categoria precisa conter entre 3 e 255 caracteres",
