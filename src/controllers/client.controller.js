@@ -13,7 +13,68 @@ export default class ClientController {
           errors: messages,
         });
       }
-      
+
+      console.log(error);
+      return res.status(500).json({
+        message: "Erro interno no servidor",
+      });
+    }
+  }
+
+  static async show(req, res) {
+    try {
+      const client = await ClientService.getClientById(req.params.id);
+      if (!client) {
+        return res.status(404).json({
+          message: "Cliente não encontrado",
+        });
+      }
+
+      return res.status(200).json(client);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Erro interno no servidor",
+      });
+    }
+  }
+
+  static async update(req, res) {
+    try {
+      const client = await ClientService.update(req.params.id, req.body);
+      if (!client) {
+        return res.status(404).json({
+          message: "Cliente não encontrado",
+        });
+      }
+
+      return res.status(200).json(client);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        const messages = error.errors.map((err) => err.message);
+        return res.status(400).json({
+          errors: messages,
+        });
+      }
+
+      console.log(error);
+      return res.status(500).json({
+        message: "Erro interno no servidor",
+      });
+    }
+  }
+
+  static async delete(req, res) {
+    try {
+      const clientDestroy = await ClientService.delete(req.params.id);
+      if (!clientDestroy) {
+        return res.status(404).json({
+          message: "Cliente não encontrado",
+        });
+      }
+
+      return res.status(204).json();
+    } catch (error) {
       console.log(error);
       return res.status(500).json({
         message: "Erro interno no servidor",
