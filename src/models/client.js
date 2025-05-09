@@ -15,6 +15,9 @@ export default class Client extends Model {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
+          notNull: {
+            msg: "Campo nome é obrigatório"
+          },
           len: {
             args: [3, 255],
             msg: "O nome da precisa conter entre 3 e 255 caracteres",
@@ -28,6 +31,9 @@ export default class Client extends Model {
           msg: "Telefone já cadastrado na base de dados",
         },
         validate: {
+          notNull: {
+            msg: "Campo telefone é obrigatório"
+          },
           isPhone(value){
             if(!validator.isMobilePhone(value, "pt-BR")){
               throw new ValidationError("Telefone inválido");
@@ -37,11 +43,14 @@ export default class Client extends Model {
       },
       password_hash: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
       password: {
         type: DataTypes.VIRTUAL,
+        allowNull: false,
         validate: {
+          notNull: {
+            msg: "Campo senha é obrigatório"
+          },
           len: {
             args: [8, 255],
             msg: "A senha precisa ter pelo menos 8 caracteres",
