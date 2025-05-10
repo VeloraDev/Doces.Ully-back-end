@@ -2,9 +2,15 @@ import { Sequelize } from "sequelize";
 import databaseConfig from "../config/database.js";
 import Category from "../models/category.js";
 import Client from "../models/client.js";
+import Product from "../models/product.js";
 
-const models = [Category, Client];
+const models = [Category, Client, Product];
 
 const connection = new Sequelize(databaseConfig);
 
 models.forEach(model => model.init(connection));
+models.forEach((model) => {
+  if(model.associate){
+    model.associate(connection.models);
+  }
+});
