@@ -39,8 +39,11 @@ export default class Product extends Model{
         type: DataTypes.DOUBLE,
         allowNull: false,
         validate: {
+          notNull: {
+            msg: "Campo preço é obrigatório"
+          },
           isNumeric: {
-            msg: "Tipo do valor inválido",
+            msg: "Preço inválido",
           },
           min: {
             args: [0],
@@ -52,8 +55,11 @@ export default class Product extends Model{
         type: DataTypes.INTEGER,
         allowNull: false,
         validate:{
+          notNull: {
+            msg: "Campo quantidade é obrigatório"
+          },
           isNumeric: {
-            msg: "Tipo do valor inválido",
+            msg: "Quantidade inválida",
           },
           min: {
             args: [0],
