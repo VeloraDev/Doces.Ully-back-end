@@ -20,7 +20,7 @@ export default class Client extends Model {
           },
           len: {
             args: [3, 255],
-            msg: "O nome da precisa conter entre 3 e 255 caracteres",
+            msg: "O nome precisa conter entre 3 e 255 caracteres",
           },
         },
       },
