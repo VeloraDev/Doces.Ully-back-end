@@ -4,7 +4,9 @@ import ProductService from "../services/product.service.js";
 export default class ProductController {
   static async create(req, res) {
     try {
-      const product = await ProductService.create(req.body);
+      const { name, description, price, quantity, category_id } = req.body;
+      const { filename } = req.file;
+      const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
       res.status(201).json(product);
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -13,7 +15,7 @@ export default class ProductController {
           errors: messages,
         });
       }
-
+      
       console.log(error);
       return res.status(500).json({
         message: "Erro interno no servidor",
