@@ -79,6 +79,21 @@ export default class Product extends Model{
             msg: "ID de categoria inválido",
           },
         },
+      },
+      img_path:{
+        type: DataTypes.STRING,
+        allowNull: true,
+        get() {
+          return this.getDataValue('img_path');
+        }
+      },
+      img_url: {
+        type: DataTypes.VIRTUAL,
+        get(){
+          const path = this.getDataValue("img_path");
+          if(!path) return null;
+          return `${process.env.SERVER_URL}/${path}`;
+        }
       }
     }, {
       sequelize,

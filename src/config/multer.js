@@ -1,13 +1,12 @@
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
   fileFilter: (req, file, cb) => {
-    if(file.mimetype !== "image/png" && file.mimetype !== "image/jpeg"){
-      return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", 'Arquivo precisa ser JPG, JPEG ou PNG'));
+    if(!(file.mimetype).startsWith("image/")){
+      return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", 'Arquivo precisa ser uma imagem'));
     }
     cb(null, true);
   },
