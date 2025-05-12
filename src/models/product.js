@@ -82,7 +82,7 @@ export default class Product extends Model{
       },
       img_path:{
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         get() {
           return this.getDataValue('img_path');
         }

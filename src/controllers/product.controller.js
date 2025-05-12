@@ -5,7 +5,13 @@ export default class ProductController {
   static async create(req, res) {
     try {
       const { name, description, price, quantity, category_id } = req.body;
-      const { filename } = req.file;
+      if(!req.file){
+        return res.status(400).json({
+          error: "A imagem do produto é obrigatória",
+        });
+      }
+      
+      const { filename } = req.body;
       const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
       res.status(201).json(product);
     } catch (error) {
