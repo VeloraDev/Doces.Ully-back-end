@@ -13,12 +13,15 @@ export default class Category extends Model {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
+          notNull: {
+            msg: "Campo nome é obrigatório",
+          },
           len: {
             args: [3, 255],
             msg: "O nome da categoria precisa conter entre 3 e 255 caracteres",
           },
-        }
-      }
+        },
+      },
     }, {
       sequelize,
       modelName: 'Category',

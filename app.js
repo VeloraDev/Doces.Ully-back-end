@@ -8,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import categoryRouter from "./src/routes/category.routes.js";
 import clientRouter from "./src/routes/client.routes.js";
 import productRouter from "./src/routes/product.routes.js";
+import addressRouter from "./src/routes/address.routes.js";
 
 class App {
   constructor() {
@@ -26,6 +27,7 @@ class App {
     this.app.use("/categories/", categoryRouter);
     this.app.use("/clients/", clientRouter);
     this.app.use("/products/", productRouter);
+    this.app.use("/addresses/", addressRouter);
   }
 }
 
