@@ -1,5 +1,7 @@
 import { ValidationError } from "sequelize";
 import ProductService from "../services/product.service.js";
+import fs from "fs";
+import path from "path";
 
 export default class ProductController {
   static async create(req, res) {
@@ -11,17 +13,23 @@ export default class ProductController {
         });
       }
       
-      const { filename } = req.body;
+      const { filename } = req.file;
       const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
       res.status(201).json(product);
     } catch (error) {
+      if(req.file){
+        fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
+          if(err) console.log("Erro ao remover imagem" + err);
+        });
+      }
+
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
         return res.status(400).json({
           errors: messages,
         });
       }
-      
+
       console.log(error);
       return res.status(500).json({
         message: "Erro interno no servidor",
