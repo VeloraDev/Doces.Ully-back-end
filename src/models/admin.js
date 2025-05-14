@@ -11,19 +11,15 @@ export default class Admin extends Model{
         validate: {
           notNull: {
             msg: "Campo email é obrigatório",
-          }
-        }
+          },
+          isEmail: {
+            msg: "E-mail inválido",
+          },
+        },
       },
       password_hash: {
         type: DataTypes.STRING,
-      },
-      password: {
-        type: DataTypes.VIRTUAL,        
-        validate: {
-          notNull: {
-            msg: "Campo senha é obrigatório",
-          },
-        },
+        allowNull: false,
       },
     }, {
       sequelize,
@@ -33,7 +29,7 @@ export default class Admin extends Model{
     return this;
   }
 
-  static passwordIsValid(password){
+  passwordIsValid(password){
     return bcrypt.compare(password, this.password_hash);
   }
 };
