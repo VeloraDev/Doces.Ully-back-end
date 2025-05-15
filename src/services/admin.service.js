@@ -6,7 +6,6 @@ dotenv.config();
 
 export default class AdminService {
   static async login(email, password) {
-    console.log(email);
     const admin = await Admin.findOne({ where: { email: email } });
     if(!admin){
       throw new ValidationError("Credenciais inválidas");
