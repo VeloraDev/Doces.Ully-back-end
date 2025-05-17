@@ -4,7 +4,8 @@ import AddressService from "../services/address.service.js";
 export default class AddressController {
   static async create(req, res) {
     try {
-      const address = await AddressService.create(req.body);
+      const { neighborhood, street, number, landmark = null } = req.body;
+      const address = await AddressService.create({ neighborhood, street, number, landmark, client_id: req.clientId });
       return res.status(201).json(address);
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -23,7 +24,7 @@ export default class AddressController {
 
   static async index(req, res) {
     try {
-      const addresses = await AddressService.getAddresses();
+      const addresses = await AddressService.getAddresses(req.clientId);
       res.status(200).json(addresses);
     } catch (error) {
       console.log(error);
@@ -35,7 +36,7 @@ export default class AddressController {
 
   static async show(req, res) {
     try {
-      const address = await AddressService.getAddressById(req.params.id);
+      const address = await AddressService.getAddressById(req.params.id, req.clientId);
       if (!address) {
         return res.status(404).json({
           message: "Endereço não encontrado",
@@ -53,7 +54,7 @@ export default class AddressController {
 
   static async update(req, res) {
     try {
-      const address = await AddressService.update(req.params.id, req.body);
+      const address = await AddressService.update(req.params.id, req.body, req.clientId);
       if (!address) {
         return res.status(404).json({
           message: "Endereço não encontrado",
@@ -78,7 +79,7 @@ export default class AddressController {
 
   static async delete(req, res) {
     try {
-      const addressDeleted = await AddressService.delete(req.params.id);
+      const addressDeleted = await AddressService.delete(req.params.id, req.clientId);
       if (!addressDeleted) {
         return res.status(404).json({
           message: "Endereço não encontrado",

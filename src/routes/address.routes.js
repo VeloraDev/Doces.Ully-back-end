@@ -1,12 +1,13 @@
 import express from "express";
 import AddressController from "../controllers/address.controller.js";
+import clientRequired from "../middlewares/clientAuth.js";
 
 const router = express.Router();
 
-router.post("/", AddressController.create);
-router.get("/", AddressController.index);
-router.get("/{:id}", AddressController.show);
-router.put("/{:id}", AddressController.update);
-router.delete("/{:id}", AddressController.delete);
+router.post("/", clientRequired, AddressController.create);
+router.get("/", clientRequired, AddressController.index);
+router.get("/{:id}", clientRequired, AddressController.show);
+router.put("/{:id}", clientRequired, AddressController.update);
+router.delete("/{:id}", clientRequired, AddressController.delete);
 
 export default router;

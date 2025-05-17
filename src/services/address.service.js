@@ -5,24 +5,25 @@ export default class AddressService {
     return await Address.create(data);
   }
 
-  static async getAddresses() {
-    return await Address.findAll();
+  static async getAddresses(clientId) {
+    return await Address.findAll({where: { client_id: clientId }});
   }
 
-  static async getAddressById(id) {
-    return await Address.findByPk(id);
-  }
-
-  static async update(id, data) {
+  static async getAddressById(id, clientId) {
     const address = await Address.findByPk(id);
-    if (!address) return null;
+    return address.client_id !== clientId ? null : address;
+  }
+
+  static async update(id, data, clientId) {
+    const address = await Address.findByPk(id);
+    if (!address || address.client_id !== clientId) return null;
 
     return await address.update(data);
   }
 
-  static async delete(id) {
+  static async delete(id, clientId) {
     const address = await Address.findByPk(id);
-    if (!address) return null;
+    if (!address || address.client_id !== clientId) return null;
 
     await address.destroy();
     return true;

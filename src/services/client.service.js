@@ -1,4 +1,6 @@
+import { ValidationError } from "sequelize";
 import Client from "../models/client.js";
+import jwt from "jsonwebtoken";
 
 export default class ClientService {
   static async create(data) {
@@ -22,5 +24,17 @@ export default class ClientService {
 
     await client.destroy();
     return true;
+  }
+
+  static async login(phone, password) {
+    const client = await Client.findOne({ where: { phone: phone } });
+    if (!client) throw new ValidationError("Credenciais inválidas");
+
+    const pass = await client.passwordIsValid(password);
+    if (!pass) throw new ValidationError("Credenciais inválidas");
+
+    const token = jwt.sign({ id: client.id }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXPIRATION });
+    
+    return token;
   }
 }

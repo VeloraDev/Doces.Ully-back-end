@@ -6,13 +6,17 @@ export default class AdminController {
     try {
       const { email, password } = req.body;
       const token = await AdminService.login(email, password);
-      res.json({ token });
+      res.status(200).json({ token });
     } catch (error) {
       if(error instanceof ValidationError){
         return res.status(400).json({
           error: error.message,
         });
       }
+
+      return res.status(500).json({
+        message: "erro interno no servidor",
+      });
     }
   }
 }

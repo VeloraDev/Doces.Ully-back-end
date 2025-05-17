@@ -74,4 +74,8 @@ export default class Client extends Model {
   static associate(models) {
     this.hasMany(models.Address, { foreignKey: "client_id" });
   }
+
+  passwordIsValid(password){
+    return bcrypt.compare(password, this.password_hash);
+  }
 }
