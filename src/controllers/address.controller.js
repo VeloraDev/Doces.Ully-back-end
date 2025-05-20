@@ -4,9 +4,14 @@ import AddressService from "../services/address.service.js";
 export default class AddressController {
   static async create(req, res) {
     try {
-      const { neighborhood, street, number, landmark = null } = req.body;
-      const address = await AddressService.create({ neighborhood, street, number, landmark, client_id: req.clientId });
-      return res.status(201).json(address);
+      const address = await AddressService.create({ ...req.body, client_id: req.clientId });
+      return res.status(201).json({ 
+        id: address.id,
+        neighborhood: address.neighborhood,
+        street: address.street, 
+        number: address.number, 
+        landmark: address.landmark 
+      });
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
@@ -25,7 +30,15 @@ export default class AddressController {
   static async index(req, res) {
     try {
       const addresses = await AddressService.getAddresses(req.clientId);
-      res.status(200).json(addresses);
+      res.status(200).json(addresses.map(address => {
+        return { 
+        id: address.id,
+        neighborhood: address.neighborhood,
+        street: address.street, 
+        number: address.number, 
+        landmark: address.landmark 
+      };
+      }));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -42,8 +55,14 @@ export default class AddressController {
           message: "Endereço não encontrado",
         });
       }
-
-      return res.status(200).json(address);
+      
+      return res.status(200).json({ 
+        id: address.id,
+        neighborhood: address.neighborhood,
+        street: address.street, 
+        number: address.number, 
+        landmark: address.landmark 
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -61,7 +80,13 @@ export default class AddressController {
         });
       }
 
-      return res.status(200).json(address);
+      return res.status(200).json({ 
+        id: address.id,
+        neighborhood: address.neighborhood,
+        street: address.street, 
+        number: address.number, 
+        landmark: address.landmark 
+      });
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);

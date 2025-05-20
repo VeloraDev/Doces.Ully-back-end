@@ -15,7 +15,15 @@ export default class ProductController {
       
       const { filename } = req.file;
       const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
-      res.status(201).json(product);
+      res.status(201).json({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        category_id: product.category_id,
+        img_url: product.img_url,
+      });
     } catch (error) {
       if(req.file){
         fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
@@ -40,7 +48,17 @@ export default class ProductController {
   static async index(req, res) {
     try {
       const products = await ProductService.getProducts();
-      res.status(200).json(products);
+      res.status(200).json(products.map(product => {
+        return {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        category_id: product.category_id,
+        img_url: product.img_url,
+      };
+      }));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -58,7 +76,15 @@ export default class ProductController {
         });
       }
 
-      return res.status(200).json(product);
+      return res.status(200).json({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        category_id: product.category_id,
+        img_url: product.img_url,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -76,7 +102,15 @@ export default class ProductController {
         });
       }
 
-      return res.status(200).json(product);
+      return res.status(200).json({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        category_id: product.category_id,
+        img_url: product.img_url,
+      });
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
