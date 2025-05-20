@@ -5,7 +5,11 @@ export default class ClientController {
   static async create(req, res) {
     try {
       const client = await ClientService.create(req.body);
-      return res.status(201).json(client);
+      return res.status(201).json({
+        id: client.id,
+        name: client.name,
+        phone: client.phone,
+      });
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
@@ -30,7 +34,11 @@ export default class ClientController {
         });
       }
 
-      return res.status(200).json(client);
+      return res.status(200).json({
+        id: client.id,
+        name: client.name,
+        phone: client.phone,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -48,7 +56,11 @@ export default class ClientController {
         });
       }
 
-      return res.status(200).json(client);
+      return res.status(200).json({
+        id: client.id,
+        name: client.name,
+        phone: client.phone,
+      });
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
