@@ -105,5 +105,9 @@ export default class Product extends Model{
 
   static associate (models) {
     this.belongsTo(models.Category, { foreignKey: "category_id" });
+    this.belongsToMany(models.Order, { 
+      through: "Order_Products",
+      foreignKey: "product_id",
+     });
   }
 }

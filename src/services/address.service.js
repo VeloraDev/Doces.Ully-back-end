@@ -11,7 +11,8 @@ export default class AddressService {
 
   static async getAddressById(id, clientId) {
     const address = await Address.findByPk(id);
-    return address.client_id !== clientId ? null : address;
+    if (!address || address.client_id !== clientId) return null;
+    return address;
   }
 
   static async update(id, data, clientId) {

@@ -10,6 +10,7 @@ import clientRouter from "./src/routes/client.routes.js";
 import productRouter from "./src/routes/product.routes.js";
 import addressRouter from "./src/routes/address.routes.js";
 import adminRouter from "./src/routes/admin.routes.js";
+import orderRouter from "./src/routes/order.routes.js";
 
 class App {
   constructor() {
@@ -30,6 +31,7 @@ class App {
     this.app.use("/products/", productRouter);
     this.app.use("/addresses/", addressRouter);
     this.app.use("/admin/", adminRouter);
+    this.app.use("/orders/", orderRouter);
   }
 }
 

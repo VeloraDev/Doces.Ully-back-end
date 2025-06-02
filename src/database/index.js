@@ -5,8 +5,10 @@ import Client from "../models/client.js";
 import Product from "../models/product.js";
 import Address from "../models/address.js";
 import Admin from "../models/admin.js";
+import Order from "../models/order.js";
+import OrderProduct from "../models/orderProduct.js";
 
-const models = [Category, Client, Product, Address, Admin];
+const models = [Category, Client, Product, Address, Admin, Order, OrderProduct];
 
 const connection = new Sequelize(databaseConfig);
 
