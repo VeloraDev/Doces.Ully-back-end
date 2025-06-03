@@ -3,6 +3,18 @@ import ProductService from "../services/product.service.js";
 import fs from "fs";
 import path from "path";
 
+function productParse(product){
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    quantity: product.quantity,
+    category_id: product.category_id,
+    img_url: product.img_url,
+  };
+}
+
 export default class ProductController {
   static async create(req, res) {
     try {
@@ -15,15 +27,7 @@ export default class ProductController {
       
       const { filename } = req.file;
       const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
-      res.status(201).json({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        category_id: product.category_id,
-        img_url: product.img_url,
-      });
+      res.status(201).json(productParse(product));
     } catch (error) {
       if(req.file){
         fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
@@ -49,15 +53,7 @@ export default class ProductController {
     try {
       const products = await ProductService.getProducts();
       res.status(200).json(products.map(product => {
-        return {
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        category_id: product.category_id,
-        img_url: product.img_url,
-      };
+        return productParse(product);
       }));
     } catch (error) {
       console.log(error);
@@ -76,15 +72,7 @@ export default class ProductController {
         });
       }
 
-      return res.status(200).json({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        category_id: product.category_id,
-        img_url: product.img_url,
-      });
+      return res.status(200).json(productParse(product));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -102,15 +90,7 @@ export default class ProductController {
         });
       }
 
-      return res.status(200).json({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        category_id: product.category_id,
-        img_url: product.img_url,
-      });
+      return res.status(200).json(productParse(product));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);

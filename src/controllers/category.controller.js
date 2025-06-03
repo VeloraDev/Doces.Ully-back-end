@@ -1,14 +1,18 @@
 import { ValidationError } from "sequelize";
 import CategoryService from "../services/category.service.js";
 
+function categoryParse(category){
+  return {
+    id: category.id,
+    name: category.name
+  };
+}
+
 export default class CategoryController {
   static async create(req, res) {
     try {
       const category = await CategoryService.create(req.body);
-      return res.status(201).json({
-        id: category.id,
-        name: category.name,
-      });
+      return res.status(201).json(categoryParse(category));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
@@ -28,10 +32,7 @@ export default class CategoryController {
     try {
       const categories = await CategoryService.getCategories();
       res.status(200).json(categories.map(category => {
-        return {
-          id: category.id,
-          name: category.name,
-        };
+        return categoryParse(category);
       }));
     } catch (error) {
 
@@ -51,10 +52,7 @@ export default class CategoryController {
         });
       }
 
-      return res.status(200).json({
-        id: category.id,
-        name: category.name,
-      });
+      return res.status(200).json(categoryParse(category));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -72,10 +70,7 @@ export default class CategoryController {
         });
       }
 
-      return res.status(200).json({
-        id: category.id,
-        name: category.name,
-      });
+      return res.status(200).json(categoryParse(category));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);

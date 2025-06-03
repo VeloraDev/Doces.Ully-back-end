@@ -1,15 +1,19 @@
 import { ValidationError } from "sequelize";
 import ClientService from "../services/client.service.js";
 
+function clientParse(client){
+  return {
+    id: client.id,
+    name: client.name,
+    phone: client.phone,
+  };
+}
+
 export default class ClientController {
   static async create(req, res) {
     try {
       const client = await ClientService.create(req.body);
-      return res.status(201).json({
-        id: client.id,
-        name: client.name,
-        phone: client.phone,
-      });
+      return res.status(201).json(clientParse(client));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
@@ -34,11 +38,7 @@ export default class ClientController {
         });
       }
 
-      return res.status(200).json({
-        id: client.id,
-        name: client.name,
-        phone: client.phone,
-      });
+      return res.status(200).json(clientParse(client));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -56,11 +56,7 @@ export default class ClientController {
         });
       }
 
-      return res.status(200).json({
-        id: client.id,
-        name: client.name,
-        phone: client.phone,
-      });
+      return res.status(200).json(clientParse(client));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
