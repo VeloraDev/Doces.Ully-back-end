@@ -1,17 +1,21 @@
 import { ValidationError } from "sequelize";
 import AddressService from "../services/address.service.js";
 
+function addressParse(address) {
+  return {
+    id: address.id,
+    neighborhood: address.neighborhood,
+    street: address.street, 
+    number: address.number, 
+    landmark: address.landmark 
+  };
+}
+
 export default class AddressController {
   static async create(req, res) {
     try {
       const address = await AddressService.create({ ...req.body, client_id: req.clientId });
-      return res.status(201).json({ 
-        id: address.id,
-        neighborhood: address.neighborhood,
-        street: address.street, 
-        number: address.number, 
-        landmark: address.landmark 
-      });
+      return res.status(201).json(addressParse(address));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
@@ -31,13 +35,7 @@ export default class AddressController {
     try {
       const addresses = await AddressService.getAddresses(req.clientId);
       res.status(200).json(addresses.map(address => {
-        return { 
-        id: address.id,
-        neighborhood: address.neighborhood,
-        street: address.street, 
-        number: address.number, 
-        landmark: address.landmark 
-      };
+        return addressParse(address);
       }));
     } catch (error) {
       console.log(error);
@@ -56,13 +54,7 @@ export default class AddressController {
         });
       }
       
-      return res.status(200).json({ 
-        id: address.id,
-        neighborhood: address.neighborhood,
-        street: address.street, 
-        number: address.number, 
-        landmark: address.landmark 
-      });
+      return res.status(200).json(addressParse(address));
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -80,13 +72,7 @@ export default class AddressController {
         });
       }
 
-      return res.status(200).json({ 
-        id: address.id,
-        neighborhood: address.neighborhood,
-        street: address.street, 
-        number: address.number, 
-        landmark: address.landmark 
-      });
+      return res.status(200).json(addressParse(address));
     } catch (error) {
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
