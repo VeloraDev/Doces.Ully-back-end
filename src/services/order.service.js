@@ -27,6 +27,10 @@ export default class OrderService {
 
     const order = await Order.create(data);
     await this.addProductOrder(products, order);
+    for (const p of products) {
+      const product = await Product.findByPk(p.product_id);
+      await product.update({ quantity: product.quantity - p.quantity });
+    }
 
     return Order.findByPk(order.id, {
       include: [{
@@ -110,6 +114,12 @@ export default class OrderService {
       throw error;
     }
 
+    for(const product of order.Products){
+      const quantityOrder = product.OrderProduct.quantity;
+
+      await product.update({ quantity: product.quantity + quantityOrder });
+    }
+
     await order.update({ status: "cancelado" });
     return order;
   }
@@ -127,6 +137,12 @@ export default class OrderService {
       const error = new Error("Pedido só pode ser concluido caso esteja pendente");
       error.statusCode = 400;
       throw error;
+    }
+
+    for(const product of order.Products){
+      const quantityOrder = product.OrderProduct.quantity;
+
+      await product.update({ quantity: product.quantity + quantityOrder });
     }
 
     await order.update({ status: "cancelado" });
