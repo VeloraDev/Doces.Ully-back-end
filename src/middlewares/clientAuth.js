@@ -16,7 +16,7 @@ function clientRequired(req, res, next){
       next();
     } catch (error) {
       console.log("Erro na verificação de token: " + error);
-      return res.status(401).json({ error: "Token inspirado, ou inválido" });
+      return res.status(401).json({ error: "Token expirado, ou inválido" });
     }
 }
 

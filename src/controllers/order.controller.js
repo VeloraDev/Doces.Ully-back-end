@@ -5,6 +5,8 @@ function orderParse(order) {
   return {
     id: order.id,
     status: order.status,
+    payment_method: order.payment_method,
+    is_pickup: order.is_pickup,
     createdAt: order.createdAt,
     products: order.Products.map((product) => ({
       id: product.id,

@@ -1,4 +1,5 @@
 import Category from "../models/category.js";
+import Product from "../models/product.js";
 
 export default class CategoryService {
   static async create(data) {
@@ -26,5 +27,16 @@ export default class CategoryService {
     
     await category.destroy();
     return true;
+  }
+
+  static async getCategoryProducts(id){
+    const category = await Category.findByPk(id, {
+      include: {
+        model: Product,
+      }
+    });
+    if(!category) return null;
+
+    return category;
   }
 }
