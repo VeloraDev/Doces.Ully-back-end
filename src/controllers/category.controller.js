@@ -103,4 +103,35 @@ export default class CategoryController {
       });
     }
   }
+
+  static async showProducts(req, res){
+    try {
+      const category = await CategoryService.getCategoryProducts(req.params.id);
+      if (!category) {
+        return res.status(404).json({
+          message: "Categoria não encontrada",
+        });
+      }
+
+      res.status(200).json({
+        ...categoryParse(category),
+        products: category.Products.map(product => {
+          return {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            quantity: product.quantity,
+            category_id: product.category_id,
+            img_url: product.img_url,
+          };
+        }),
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Erro interno no servidor",
+      });
+    }
+  }
 }
