@@ -1,6 +1,9 @@
 import express from "express";
 import path from "path";
 import "./src/database/index.js";
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,6 +26,10 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
+    this.app.use(cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    }));
   }
 
   routes(){
