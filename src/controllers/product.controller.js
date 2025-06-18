@@ -31,7 +31,7 @@ export default class ProductController {
     } catch (error) {
       if(req.file){
         fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
-          if(err) console.log("Erro ao remover imagem" + err);
+          if(err) console.log("Erro ao remover imagem: " + err);
         });
       }
 
@@ -83,15 +83,36 @@ export default class ProductController {
 
   static async update(req, res) {
     try {
-      const product = await ProductService.update(req.params.id, req.body);
-      if (!product) {
+      const productExist = await ProductService.getProductById(req.params.id);
+      if (!productExist) {
         return res.status(404).json({
           message: "Produto não encontrado",
         });
       }
 
+      let img_path, oldPath = productExist.img_path;
+      if(req.file){
+        img_path = `uploads/images/${req.file.filename}`;
+      }
+
+      console.log(req.file);
+
+      const product = await ProductService.update(req.params.id, { ...req.body, img_path });
+      if(req.file){
+        fs.unlink(path.resolve("uploads", "images", oldPath.split("/").pop()), err => {
+          if(err) console.log("Erro ao remover imagem: " + err);
+        });
+      }
+
       return res.status(200).json(productParse(product));
+      
     } catch (error) {
+      if(req.file){
+        fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
+          if(err) console.log("Erro ao remover imagem: " + err);
+        });
+      }
+
       if (error instanceof ValidationError) {
         const messages = error.errors.map((err) => err.message);
         return res.status(400).json({
