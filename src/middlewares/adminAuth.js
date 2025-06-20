@@ -4,7 +4,7 @@ function adminRequired(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      error: "Login como administrador requerido",
+      errors: ["Login como administrador requerido"],
     });
   }
 
@@ -15,7 +15,7 @@ function adminRequired(req, res, next) {
     next();
   } catch (error) {
     console.log("Erro na verificação de token: " + error);
-    return res.status(401).json({ error: "Token expirado, ou inválido" });
+    return res.status(401).json({ errors: ["Token expirado, ou inválido"] });
   }
 }
 

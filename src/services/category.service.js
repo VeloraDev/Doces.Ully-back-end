@@ -1,6 +1,7 @@
 import { ValidationError, ValidationErrorItem } from "sequelize";
 import Category from "../models/category.js";
 import Product from "../models/product.js";
+import AppError from "../errors/AppError.js";
 
 export default class CategoryService {
   static async create(data) {
@@ -12,12 +13,17 @@ export default class CategoryService {
   }
 
   static async getCategoryById(id){
-    return await Category.findByPk(id);
+    const category = await Category.findByPk(id);
+    if(!category){
+      throw new AppError("Categoria não encontrada", 404);
+    }
   }
 
   static async update(id, data){
     const category = await Category.findByPk(id);
-    if(!category) return null;
+    if(!category) {
+      throw new AppError("Cateogria não encontrada", 404);
+    }
     
     return await category.update(data);
   }
@@ -28,9 +34,11 @@ export default class CategoryService {
         model: Product,
       }
     });
-    if(!category) return null;
+    if(!category) {
+      throw new AppError("Categoria não encontrada", 404);
+    }
     if(category.Products.length !== 0){
-      throw new ValidationError("Errors: ", [new ValidationErrorItem("A categoria só pode ser apagada se não houver produtos.")]);
+      throw new AppError("A categoria só pode ser apagada se não houver produtos", 400);
     }
     
     await category.destroy();
@@ -43,7 +51,9 @@ export default class CategoryService {
         model: Product,
       }
     });
-    if(!category) return null;
+    if(!category) {
+      throw new AppError("Categoria não encontrada", 404);
+    }
 
     return category;
   }

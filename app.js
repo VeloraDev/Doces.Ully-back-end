@@ -15,11 +15,14 @@ import addressRouter from "./src/routes/address.routes.js";
 import adminRouter from "./src/routes/admin.routes.js";
 import orderRouter from "./src/routes/order.routes.js";
 
+import errorHandler from "./src/middlewares/errorHandler.js";
+
 class App {
   constructor() {
     this.app = express();
     this.middlewares();
     this.routes();
+    this.errorHandlers();
   }
 
   middlewares(){
@@ -39,6 +42,10 @@ class App {
     this.app.use("/addresses/", addressRouter);
     this.app.use("/admin/", adminRouter);
     this.app.use("/orders/", orderRouter);
+  }
+
+  errorHandlers(){
+    this.app.use(errorHandler);
   }
 }
 

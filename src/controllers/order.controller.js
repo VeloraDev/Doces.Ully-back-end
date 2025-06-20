@@ -1,4 +1,3 @@
-import { ValidationError } from "sequelize";
 import OrderService from "../services/order.service.js";
 
 function orderParse(order) {
@@ -7,6 +6,11 @@ function orderParse(order) {
     status: order.status,
     payment_method: order.payment_method,
     is_pickup: order.is_pickup,
+    address: order.is_pickup ? null : {
+      neighborhood: order.address_neighborhood,
+      street: order.address_street,
+      number: order.address_number,
+    },
     createdAt: order.createdAt,
     products: order.Products.map((product) => ({
       id: product.id,
@@ -22,7 +26,7 @@ function orderParse(order) {
 }
 
 export default class OrderController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const order = await OrderService.create({
         ...req.body,
@@ -31,106 +35,59 @@ export default class OrderController {
 
       return res.status(201).json(orderParse(order));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error.message);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async index(req, res) {
-    const orders = await OrderService.getOrders(req.clientId);
-    res.status(200).json(
-      orders.map((order) => {
-        return orderParse(order);
-      })
-    );
+  static async index(req, res, next) {
+    try {
+      const orders = await OrderService.getOrders(req.clientId);
+      res.status(200).json(
+        orders.map((order) => {
+          return orderParse(order);
+        })
+      );
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
+    try {
     const order = await OrderService.getOrdersById(req.params.id, req.clientId);
-    if (!order) {
-      return res.status(404).json({
-        message: "Pedido não encontrado",
-      });
-    }
-
     return res.status(200).json(orderParse(order));
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async cancelByClient(req, res) {
+  static async cancelByClient(req, res, next) {
     try {
       const order = await OrderService.cancelByClient(
         req.params.id,
         req.clientId
       );
-      if (!order) {
-        return res.status(404).json({
-          message: "Pedido não encontrado",
-        });
-      }
-
       return res.status(200).json(orderParse(order));
     } catch (error) {
-      if (error.statusCode) {
-        return res.status(error.statusCode).json({
-          error: error.message,
-        });
-      }
-
-      console.log(error);
-      res.status(500).json({ message: "Erro interno no servidor" });
+      next(error);
     }
   }
 
-  static async cancelByAdmin(req, res) {
+  static async cancelByAdmin(req, res, next) {
     try {
       const order = await OrderService.cancelByAdmin(req.params.id);
-      if (!order) {
-        return res.status(404).json({
-          message: "Pedido não encontrado",
-        });
-      }
-
       return res.status(200).json(orderParse(order));
     } catch (error) {
-      if (error.statusCode) {
-        return res.status(error.statusCode).json({
-          error: error.message,
-        });
-      }
-
-      console.log(error);
-      res.status(500).json({ message: "Erro interno no servidor" });
+      next(error);
     }
   }
 
-  static async confirm(req, res) {
+  static async confirm(req, res, next) {
     try {
       const order = await OrderService.confirm(req.params.id);
-      if (!order) {
-        return res.status(404).json({
-          message: "Pedido não encontrado",
-        });
-      }
-
       return res.status(200).json(orderParse(order));
     } catch (error) {
-      if (error.statusCode) {
-        return res.status(error.statusCode).json({
-          error: error.message,
-        });
-      }
-
-      console.log(error);
-      res.status(500).json({ message: "Erro interno no servidor" });
+      next(error);
     }
   }
 }

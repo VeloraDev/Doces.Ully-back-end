@@ -1,4 +1,3 @@
-import { ValidationError } from "sequelize";
 import ProductService from "../services/product.service.js";
 import fs from "fs";
 import path from "path";
@@ -16,17 +15,16 @@ function productParse(product){
 }
 
 export default class ProductController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
-      const { name, description, price, quantity, category_id } = req.body;
       if(!req.file){
         return res.status(400).json({
-          error: "A imagem do produto é obrigatória",
+          errors: ["A imagem do produto é obrigatória"],
         });
       }
       
       const { filename } = req.file;
-      const product = await ProductService.create({ name, description, price, quantity, category_id, img_path: `uploads/images/${filename}` } );
+      const product = await ProductService.create({ ...req.body, img_path: `uploads/images/${filename}` } );
       res.status(201).json(productParse(product));
     } catch (error) {
       if(req.file){
@@ -35,53 +33,31 @@ export default class ProductController {
         });
       }
 
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async index(req, res) {
+  static async index(req, res, next) {
     try {
       const products = await ProductService.getProducts();
       res.status(200).json(products.map(product => {
         return productParse(product);
       }));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
     try {
       const product = await ProductService.getProductById(req.params.id);
-      if (!product) {
-        return res.status(404).json({
-          message: "Produto não encontrado",
-        });
-      }
-
       return res.status(200).json(productParse(product));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     try {
       const productExist = await ProductService.getProductById(req.params.id);
       if (!productExist) {
@@ -95,8 +71,6 @@ export default class ProductController {
         img_path = `uploads/images/${req.file.filename}`;
       }
 
-      console.log(req.file);
-
       const product = await ProductService.update(req.params.id, { ...req.body, img_path });
       if(req.file){
         fs.unlink(path.resolve("uploads", "images", oldPath.split("/").pop()), err => {
@@ -105,7 +79,6 @@ export default class ProductController {
       }
 
       return res.status(200).json(productParse(product));
-      
     } catch (error) {
       if(req.file){
         fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
@@ -113,34 +86,15 @@ export default class ProductController {
         });
       }
 
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
-  static async delete(req, res) {
+  static async delete(req, res, next) {
     try {
-      const productDestroy = await ProductService.delete(req.params.id);
-      if (!productDestroy) {
-        return res.status(404).json({
-          message: "Produto não encontrado",
-        });
-      }
-
+      await ProductService.delete(req.params.id);
       return res.status(204).json();
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 }
