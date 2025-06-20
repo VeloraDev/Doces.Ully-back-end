@@ -44,14 +44,4 @@ export default class ClientController {
       next(error);
     }
   }
-
-  static async login(req, res, next){
-    try {
-      const { phone, password } = req.body;
-      const token = await ClientService.login(phone, password);
-      res.status(200).json({ token });
-    } catch (error) {
-      next(error);
-    }
-  }
 }
