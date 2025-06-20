@@ -1,4 +1,3 @@
-import { ValidationError, ValidationErrorItem } from "sequelize";
 import Category from "../models/category.js";
 import Product from "../models/product.js";
 import AppError from "../errors/AppError.js";
@@ -17,6 +16,8 @@ export default class CategoryService {
     if(!category){
       throw new AppError("Categoria não encontrada", 404);
     }
+
+    return category;
   }
 
   static async update(id, data){
