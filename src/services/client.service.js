@@ -1,5 +1,4 @@
 import Client from "../models/client.js";
-import jwt from "jsonwebtoken";
 import AppError from "../errors/AppError.js";
 
 export default class ClientService {
@@ -33,20 +32,5 @@ export default class ClientService {
       throw new AppError("Cliente não encontrado", 404);
     }
     await client.destroy();
-  }
-
-  static async login(phone, password) {
-    const client = await Client.findOne({ where: { phone: phone } });
-    if (!client) {
-      throw new AppError("Credenciais inválidas", 401);
-    }
-
-    const pass = await client.passwordIsValid(password);
-    if (!pass) {
-      throw new AppError("Credenciais inválidas", 401);
-    }
-
-    const token = jwt.sign({ id: client.id }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXPIRATION });
-    return token;
   }
 }

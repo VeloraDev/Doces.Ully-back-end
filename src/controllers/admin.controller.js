@@ -5,7 +5,12 @@ export default class AdminController {
     try {
       const { email, password } = req.body;
       const token = await AdminService.login(email, password);
-      res.status(200).json({ token });
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 604800000,
+      });
+      res.status(200).json({ message: "Administrador logado com sucesso" });
     } catch (error) {
       next(error);
     }

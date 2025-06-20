@@ -3,6 +3,7 @@ import path from "path";
 import "./src/database/index.js";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 import { fileURLToPath } from "url";
@@ -12,8 +13,8 @@ import categoryRouter from "./src/routes/category.routes.js";
 import clientRouter from "./src/routes/client.routes.js";
 import productRouter from "./src/routes/product.routes.js";
 import addressRouter from "./src/routes/address.routes.js";
-import adminRouter from "./src/routes/admin.routes.js";
 import orderRouter from "./src/routes/order.routes.js";
+import authRouter from "./src/routes/auth.routes.js";
 
 import errorHandler from "./src/middlewares/errorHandler.js";
 
@@ -33,6 +34,7 @@ class App {
       origin: process.env.CORS_ORIGIN,
       credentials: true,
     }));
+    this.app.use(cookieParser());
   }
 
   routes(){
@@ -40,8 +42,8 @@ class App {
     this.app.use("/clients/", clientRouter);
     this.app.use("/products/", productRouter);
     this.app.use("/addresses/", addressRouter);
-    this.app.use("/admin/", adminRouter);
     this.app.use("/orders/", orderRouter);
+    this.app.use("/auth/", authRouter);
   }
 
   errorHandlers(){

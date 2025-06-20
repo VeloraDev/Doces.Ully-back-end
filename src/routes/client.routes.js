@@ -5,7 +5,6 @@ import validateBody from "../middlewares/validateBody.js";
 
 const router = express.Router();
 
-router.post("/login", validateBody, ClientController.login);
 router.post("/", validateBody, ClientController.create);
 router.get("/", clientRequired, ClientController.show);
 router.put("/", clientRequired, validateBody, ClientController.update);
