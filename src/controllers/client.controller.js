@@ -1,4 +1,3 @@
-import { ValidationError } from "sequelize";
 import ClientService from "../services/client.service.js";
 
 function clientParse(client){
@@ -10,101 +9,49 @@ function clientParse(client){
 }
 
 export default class ClientController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const client = await ClientService.create(req.body);
       return res.status(201).json(clientParse(client));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
     try {
       const client = await ClientService.getClientById(req.clientId);
-      if (!client) {
-        return res.status(404).json({
-          message: "Cliente não encontrado",
-        });
-      }
-
       return res.status(200).json(clientParse(client));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     try {
       const client = await ClientService.update(req.clientId, req.body);
-      if (!client) {
-        return res.status(404).json({
-          message: "Cliente não encontrado",
-        });
-      }
-
       return res.status(200).json(clientParse(client));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async delete(req, res) {
+  static async delete(req, res, next) {
     try {
-      const clientDestroy = await ClientService.delete(req.clientId);
-      if (!clientDestroy) {
-        return res.status(404).json({
-          message: "Cliente não encontrado",
-        });
-      }
-
+      await ClientService.delete(req.clientId);
       return res.status(204).json();
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async login(req, res){
+  static async login(req, res, next){
     try {
       const { phone, password } = req.body;
       const token = await ClientService.login(phone, password);
       res.status(200).json({ token });
     } catch (error) {
-      if(error instanceof ValidationError){
-        return res.status(400).json({
-          error: error.message,
-        });
-      }
-
-      return res.status(500).json({
-        message: "erro interno no servidor",
-      });
+      next(error);
     }
   }
 }

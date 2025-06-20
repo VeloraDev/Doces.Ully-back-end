@@ -1,4 +1,3 @@
-import { ValidationError } from "sequelize";
 import CategoryService from "../services/category.service.js";
 
 function categoryParse(category){
@@ -9,116 +8,56 @@ function categoryParse(category){
 }
 
 export default class CategoryController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const category = await CategoryService.create(req.body);
       return res.status(201).json(categoryParse(category));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-      
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async index(req, res) {
+  static async index(req, res, next) {
     try {
       const categories = await CategoryService.getCategories();
       res.status(200).json(categories.map(category => {
         return categoryParse(category);
       }));
     } catch (error) {
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
     try {
       const category = await CategoryService.getCategoryById(req.params.id);
-      if (!category) {
-        return res.status(404).json({
-          message: "Categoria não encontrada",
-        });
-      }
-
       return res.status(200).json(categoryParse(category));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     try {
       const category = await CategoryService.update(req.params.id, req.body);
-      if (!category) {
-        return res.status(404).json({
-          message: "Categoria não encontrada",
-        });
-      }
-
       return res.status(200).json(categoryParse(category));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async delete(req, res) {
+  static async delete(req, res, next) {
     try {
-      const categoryDestroy = await CategoryService.delete(req.params.id);
-      if (!categoryDestroy) {
-        return res.status(404).json({
-          message: "Categoria não encontrada",
-        });
-      }
-
+      await CategoryService.delete(req.params.id);
       return res.status(204).json();
     } catch (error) {
-      if(error instanceof ValidationError){
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async showProducts(req, res){
+  static async showProducts(req, res, next){
     try {
       const category = await CategoryService.getCategoryProducts(req.params.id);
-      if (!category) {
-        return res.status(404).json({
-          message: "Categoria não encontrada",
-        });
-      }
-
       res.status(200).json({
         ...categoryParse(category),
         products: category.Products.map(product => {
@@ -134,10 +73,7 @@ export default class CategoryController {
         }),
       });
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 }

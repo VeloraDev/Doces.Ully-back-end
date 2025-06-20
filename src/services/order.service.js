@@ -1,26 +1,28 @@
-import { ValidationError, ValidationErrorItem } from "sequelize";
 import Order from "../models/order.js";
 import OrderProduct from "../models/orderProduct.js";
 import Product from "../models/product.js";
+import AppError from "../errors/AppError.js";
 
 export default class OrderService {
   static async create(data){
     if (data.is_pickup === false) {
       const errors = [];
-      if (!data.address_neighborhood) errors.push("Campo bairro é obrigatório");
-      if (!data.address_street) errors.push("Campo rua é obrigatório");
-      if (!data.address_number) errors.push("Campo número é obrigatório");
+      if (!data.address_neighborhood) errors.push("Campo bairro é obrigatório quando o pedido é para entrega");
+      if (!data.address_street) errors.push("Campo rua é obrigatório quando o pedido é para entrega");
+      if (!data.address_number) errors.push("Campo número é obrigatório quando o pedido é para entrega");
 
       if (errors.length) {
-        throw new ValidationError("Falha na validação do endereço:", errors.map(e => new ValidationErrorItem(e)));
+        throw new AppError(errors, 400);
       }
+    }
+
+    if(data.payment_method !== "pix" && data.payment_method !== "dinheiro"){
+      throw new AppError("Método de pagamento deve ser pix, ou dinheiro", 400);
     }
 
     const { products = null } = data;
     if (!Array.isArray(products) || products.length === 0) {
-      throw new ValidationError("Lista de produtos é obrigatória e não pode ser vazia", [
-        new ValidationErrorItem("Nenhum produto foi enviado"),
-      ]);
+      throw new AppError("Nenhum produto foi enviado", 400);
     }
     
     await this.validateProducts(products);
@@ -58,7 +60,9 @@ export default class OrderService {
       }
     }
 
-    if(errors.length !== 0) throw new ValidationError("Errors:", errors.map(e => new ValidationErrorItem(e)));
+    if(errors.length !== 0) {
+      throw new AppError(errors, 400);
+    };
   }
 
   static async addProductOrder(products, order){
@@ -94,7 +98,9 @@ export default class OrderService {
         through: { attributes: ['quantity'] }
       }],
     });
-    if(!order || order.client_id !== clientId) return null;
+    if(!order || order.client_id !== clientId) {
+      throw new AppError("Pedido não encontrado", 404);
+    };
     
     return order;
   }
@@ -106,12 +112,12 @@ export default class OrderService {
         through: { attributes: ['quantity'] }
       }],
     });
-    if(!order || order.client_id !== clientId) return null;
+    if(!order || order.client_id !== clientId) {
+      throw new AppError("Pedido não encontrado", 404);
+    };
 
     if(order.status !== "pendente"){
-      const error = new Error("Pedido só pode ser concluido caso esteja pendente");
-      error.statusCode = 400;
-      throw error;
+      throw new AppError("Pedido só pode ser concluido caso esteja pendente", 400);
     }
 
     for(const product of order.Products){
@@ -131,12 +137,12 @@ export default class OrderService {
         through: { attributes: ['quantity'] }
       }],
     });
-    if(!order) return null;
+    if(!order) {
+      throw new AppError("Pedido não encontrado", 404);
+    };
 
     if(order.status !== "pendente"){
-      const error = new Error("Pedido só pode ser concluido caso esteja pendente");
-      error.statusCode = 400;
-      throw error;
+      throw new AppError("Pedido só pode ser cancelado caso esteja pendente", 400);
     }
 
     for(const product of order.Products){
@@ -156,12 +162,12 @@ export default class OrderService {
         through: { attributes: ['quantity'] }
       }],
     });
-    if(!order) return null;
+    if(!order) {
+      throw new AppError("Pedido não encontrado", 404);
+    };
 
     if(order.status !== "pendente"){
-      const error = new Error("Pedido só pode ser concluido caso esteja pendente");
-      error.statusCode = 400;
-      throw error;
+      throw new AppError("Pedido só pode ser concluido caso esteja pendente", 400);
     }
 
     order.update({ status: "concluido" });

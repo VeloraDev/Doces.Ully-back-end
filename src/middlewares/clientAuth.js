@@ -4,7 +4,7 @@ function clientRequired(req, res, next){
   const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        error: "Login como cliente requerido",
+        errors: ["Login como cliente requerido"],
       });
     }
   
@@ -16,7 +16,7 @@ function clientRequired(req, res, next){
       next();
     } catch (error) {
       console.log("Erro na verificação de token: " + error);
-      return res.status(401).json({ error: "Token expirado, ou inválido" });
+      return res.status(401).json({ errors: ["Token expirado, ou inválido"] });
     }
 }
 

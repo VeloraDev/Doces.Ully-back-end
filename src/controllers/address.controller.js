@@ -1,4 +1,3 @@
-import { ValidationError } from "sequelize";
 import AddressService from "../services/address.service.js";
 
 function addressParse(address) {
@@ -12,40 +11,27 @@ function addressParse(address) {
 }
 
 export default class AddressController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     try {
       const address = await AddressService.create({ ...req.body, client_id: req.clientId });
       return res.status(201).json(addressParse(address));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async index(req, res) {
+  static async index(req, res, next) {
     try {
       const addresses = await AddressService.getAddresses(req.clientId);
       res.status(200).json(addresses.map(address => {
         return addressParse(address);
       }));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async show(req, res) {
+  static async show(req, res, next) {
     try {
       const address = await AddressService.getAddressById(req.params.id, req.clientId);
       if (!address) {
@@ -56,14 +42,11 @@ export default class AddressController {
       
       return res.status(200).json(addressParse(address));
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async update(req, res) {
+  static async update(req, res, next) {
     try {
       const address = await AddressService.update(req.params.id, req.body, req.clientId);
       if (!address) {
@@ -74,21 +57,11 @@ export default class AddressController {
 
       return res.status(200).json(addressParse(address));
     } catch (error) {
-      if (error instanceof ValidationError) {
-        const messages = error.errors.map((err) => err.message);
-        return res.status(400).json({
-          errors: messages,
-        });
-      }
-
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 
-  static async delete(req, res) {
+  static async delete(req, res, next) {
     try {
       const addressDeleted = await AddressService.delete(req.params.id, req.clientId);
       if (!addressDeleted) {
@@ -99,10 +72,7 @@ export default class AddressController {
 
       return res.status(204).send();
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Erro interno no servidor",
-      });
+      next(error);
     }
   }
 }
