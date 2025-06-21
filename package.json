@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "node server.js"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "type": "module",
   "author": "",
   "license": "ISC",
