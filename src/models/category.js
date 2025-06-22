@@ -24,7 +24,8 @@ export default class Category extends Model {
       },
     }, {
       sequelize,
-      modelName: 'Category',
+      modelName: "Category",
+      tableName: "Categories",
     });
     
     return this;

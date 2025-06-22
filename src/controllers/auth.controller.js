@@ -7,8 +7,10 @@ export default class AuthController {
       const token = await AuthService.loginAdmin(email, password);
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
+        secure: false,  
+        sameSite: "lax",
         maxAge: 604800000,
+        path: "/",
       });
       res.status(200).json({ message: "Administrador logado com sucesso" });
     } catch (error) {
@@ -22,8 +24,10 @@ export default class AuthController {
       const token = await AuthService.loginClient(phone, password);
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
+        secure: false,
+        sameSite: "lax",
         maxAge: 604800000,
+        path: "/",
       });
       res.status(200).json({ message: "Cliente logado com sucesso" });
     } catch (error) {
@@ -38,10 +42,12 @@ export default class AuthController {
       });
     }
 
-    res.clearCookie('token', {
+    res.clearCookie("token", {
       httpOnly: true,
-      sameSite: 'strict'
+      secure: false,
+      sameSite: "lax",
+      path: "/",
     });
-    res.status(200).json({ message: 'Logout efetuado com sucesso' });
+    res.status(200).json({ message: "Logout efetuado com sucesso" });
   }
 }

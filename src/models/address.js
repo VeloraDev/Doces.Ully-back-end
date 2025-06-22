@@ -62,7 +62,8 @@ export default class Address extends Model {
       },
     }, {
       sequelize,
-      modelName: 'Address',
+      modelName: "Address",
+      tableName: "Addresses",
     });
 
     return this;

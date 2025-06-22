@@ -59,10 +59,11 @@ export default class Client extends Model {
       },
     }, {
       sequelize,
-      modelName: 'Client',
+      modelName: "Client",
+      tableName: "Clients",
     });
 
-    this.addHook('beforeSave', async client => {
+    this.addHook("beforeSave", async client => {
       if(client.password){
         client.password_hash = await bcrypt.hash(client.password, 9);
       }

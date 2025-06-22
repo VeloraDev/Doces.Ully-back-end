@@ -97,7 +97,8 @@ export default class Product extends Model{
       }
     }, {
       sequelize,
-      modelName: 'Product',
+      modelName: "Product",
+      tableName: "Products",
     });
 
     return this;

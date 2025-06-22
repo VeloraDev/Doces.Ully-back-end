@@ -47,7 +47,7 @@ export default class OrderProduct extends Model {
     }, {
       sequelize,
       modelName: "OrderProduct",
-      tableName: "order_products",
+      tableName: "Order_Products",
       timestamps: false,
       id: false,
     } );

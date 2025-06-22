@@ -28,7 +28,7 @@ export default{
         type: Sequelize.UUID,
         allowNull: false,
         references:{
-          model: "categories",
+          model: "Categories",
           key: "id",
         },
         onUpdate: "CASCADE",

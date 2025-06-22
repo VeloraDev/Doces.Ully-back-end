@@ -23,7 +23,8 @@ export default class Admin extends Model{
       },
     }, {
       sequelize,
-      modelName: 'Admin',
+      modelName: "Admin",
+      tableName: "Admins",
     });
 
     return this;

@@ -70,6 +70,7 @@ export default class Order extends Model {
       {
         sequelize,
         modelName: "Order",
+        tableName: "Orders",
       }
     );
   }
