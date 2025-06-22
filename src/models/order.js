@@ -32,7 +32,7 @@ export default class Order extends Model {
               msg: "O pedido precisa ter um método de pagamento",
             },
             isIn: {
-              args: ["pix", "dinheiro"],
+              args: [["pix", "dinheiro"]],
               msg: "A forma de pagamento precisa ser em pix, ou dinheiro",
             },
           },

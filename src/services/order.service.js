@@ -16,10 +16,6 @@ export default class OrderService {
       }
     }
 
-    if(data.payment_method !== "pix" && data.payment_method !== "dinheiro"){
-      throw new AppError("Método de pagamento deve ser pix, ou dinheiro", 400);
-    }
-
     const { products = null } = data;
     if (!Array.isArray(products) || products.length === 0) {
       throw new AppError("Nenhum produto foi enviado", 400);
