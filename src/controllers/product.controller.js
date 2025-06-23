@@ -1,6 +1,4 @@
 import ProductService from "../services/product.service.js";
-import fs from "fs";
-import path from "path";
 
 function productParse(product){
   return {
@@ -10,7 +8,7 @@ function productParse(product){
     price: product.price,
     quantity: product.quantity,
     category_id: product.category_id,
-    img_url: product.img_url,
+    img_url: product.img_path,
   };
 }
 
@@ -23,16 +21,10 @@ export default class ProductController {
         });
       }
       
-      const { filename } = req.file;
-      const product = await ProductService.create({ ...req.body, img_path: `uploads/images/${filename}` } );
+      const url = req.file.path;
+      const product = await ProductService.create({ ...req.body, img_path: url } );
       res.status(201).json(productParse(product));
     } catch (error) {
-      if(req.file){
-        fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
-          if(err) console.log("Erro ao remover imagem: " + err);
-        });
-      }
-
       next(error);
     }
   }
@@ -60,32 +52,15 @@ export default class ProductController {
   static async update(req, res, next) {
     try {
       const productExist = await ProductService.getProductById(req.params.id);
-      if (!productExist) {
-        return res.status(404).json({
-          message: "Produto não encontrado",
-        });
-      }
 
-      let img_path, oldPath = productExist.img_path;
+      let img_path = productExist.img_path;
       if(req.file){
-        img_path = `uploads/images/${req.file.filename}`;
+        img_path = req.file.path;
       }
 
       const product = await ProductService.update(req.params.id, { ...req.body, img_path });
-      if(req.file){
-        fs.unlink(path.resolve("uploads", "images", oldPath.split("/").pop()), err => {
-          if(err) console.log("Erro ao remover imagem: " + err);
-        });
-      }
-
       return res.status(200).json(productParse(product));
     } catch (error) {
-      if(req.file){
-        fs.unlink(path.resolve("uploads", "images", req.file.filename), err => {
-          if(err) console.log("Erro ao remover imagem: " + err);
-        });
-      }
-
       next(error);
     }
   }
