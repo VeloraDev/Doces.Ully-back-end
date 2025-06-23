@@ -83,18 +83,7 @@ export default class Product extends Model{
       img_path:{
         type: DataTypes.STRING,
         allowNull: false,
-        get() {
-          return this.getDataValue('img_path');
-        }
       },
-      img_url: {
-        type: DataTypes.VIRTUAL,
-        get(){
-          const path = this.getDataValue("img_path");
-          if(!path) return null;
-          return `${process.env.SERVER_URL}/${path}`;
-        }
-      }
     }, {
       sequelize,
       modelName: "Product",

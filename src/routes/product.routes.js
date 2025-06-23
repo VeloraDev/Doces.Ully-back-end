@@ -1,12 +1,12 @@
 import express from "express";
 import multer from "multer";
 import ProductController from "../controllers/product.controller.js";
-import multerConfig from "../config/multer.js";
+import multerCloundinaryConfig from "../config/multerCloudinary.js";
 import multerErrorhandler from "../middlewares/multerErrorHandler.js";
 import adminRequired from "../middlewares/adminAuth.js";
 
 const router = express.Router();
-const upload = multer(multerConfig);
+const upload = multer(multerCloundinaryConfig);
 
 router.post("/", adminRequired, upload.single("image"), ProductController.create, multerErrorhandler);
 router.get("/", ProductController.index);
