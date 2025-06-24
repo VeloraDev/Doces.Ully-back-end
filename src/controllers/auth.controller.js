@@ -7,8 +7,8 @@ export default class AuthController {
       const token = await AuthService.loginAdmin(email, password);
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,  
-        sameSite: "lax",
+        secure: true,  
+        sameSite: "None",
         maxAge: 604800000,
         path: "/",
       });
@@ -24,8 +24,8 @@ export default class AuthController {
       const token = await AuthService.loginClient(phone, password);
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,  
+        sameSite: "None",
         maxAge: 604800000,
         path: "/",
       });
@@ -44,8 +44,8 @@ export default class AuthController {
 
     res.clearCookie("token", {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,  
+      sameSite: "None",
       path: "/",
     });
     res.status(200).json({ message: "Logout efetuado com sucesso" });
