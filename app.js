@@ -1,13 +1,10 @@
 import express from "express";
-import path from "path";
 import "./src/database/index.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 dotenv.config();
-
-import { fileURLToPath } from "url";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import categoryRouter from "./src/routes/category.routes.js";
 import clientRouter from "./src/routes/client.routes.js";
@@ -29,12 +26,12 @@ class App {
   middlewares(){
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
-    this.app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
     this.app.use(cors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
     }));
     this.app.use(cookieParser());
+    this.app.use(helmet());
   }
 
   routes(){
