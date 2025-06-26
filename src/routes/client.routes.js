@@ -1,13 +1,14 @@
 import express from "express";
 import ClientController from "../controllers/client.controller.js";
 import clientRequired from "../middlewares/clientAuth.js";
-import validateBody from "../middlewares/validateBody.js";
+import { validateSchema } from "../middlewares/validateSchema.js";
+import { createClientSchema, updateClientSchema } from "../schemas/clientSchema.js";
 
 const router = express.Router();
 
-router.post("/", validateBody, ClientController.create);
+router.post("/", validateSchema(createClientSchema), ClientController.create);
 router.get("/", clientRequired, ClientController.show);
-router.put("/", clientRequired, validateBody, ClientController.update);
+router.put("/", clientRequired, validateSchema(updateClientSchema), ClientController.update);
 router.delete("/", clientRequired, ClientController.delete);
 
 export default router;
