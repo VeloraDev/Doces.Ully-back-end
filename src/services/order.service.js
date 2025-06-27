@@ -5,26 +5,17 @@ import AppError from "../errors/AppError.js";
 
 export default class OrderService {
   static async create(data){
-    if (data.is_pickup === false) {
-      const errors = [];
-      if (!data.address_neighborhood) errors.push("Campo bairro é obrigatório quando o pedido é para entrega");
-      if (!data.address_street) errors.push("Campo rua é obrigatório quando o pedido é para entrega");
-      if (!data.address_number) errors.push("Campo número é obrigatório quando o pedido é para entrega");
-
-      if (errors.length) {
-        throw new AppError(errors, 400);
-      }
-    }
-
-    const { products = null } = data;
-    if (!Array.isArray(products) || products.length === 0) {
-      throw new AppError("Nenhum produto foi enviado", 400);
-    }
-    
+    const { products = null, address = null } = data;
     await this.validateProducts(products);
 
-    const order = await Order.create(data);
+    const order = await Order.create({ 
+      ...data,
+      address_neighborhood: address ? address.neighborhood : null,
+      address_street: address ? address.street : null,
+      address_number: address ? address.number : null,
+    });
     await this.addProductOrder(products, order);
+
     for (const p of products) {
       const product = await Product.findByPk(p.product_id);
       await product.update({ quantity: product.quantity - p.quantity });
