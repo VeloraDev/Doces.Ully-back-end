@@ -1,14 +1,12 @@
 import express from "express";
-import multer from "multer";
 import ProductController from "../controllers/product.controller.js";
-import multerCloundinaryConfig from "../config/multerCloudinary.js";
 import multerErrorhandler from "../middlewares/multerErrorHandler.js";
 import adminRequired from "../middlewares/adminAuth.js";
 import { validateSchema } from "../middlewares/validateSchema.js";
 import { createProductSchema, updateProductSchema } from "../schemas/productSchema.js";
+import upload from "../config/multer.js";
 
 const router = express.Router();
-const upload = multer(multerCloundinaryConfig);
 
 router.post("/", adminRequired, upload.single("image"), validateSchema(createProductSchema), ProductController.create, multerErrorhandler);
 router.get("/", ProductController.index);

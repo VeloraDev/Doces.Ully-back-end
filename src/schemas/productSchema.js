@@ -13,7 +13,7 @@ export const createProductSchema = Joi.object({
   }),
   price: Joi.number().min(0.01).precision(2).required().messages({
     "any.required": "O campo 'price' é obrigatório",
-    "number.min": "O campo preço deve ser maior que {#min}",
+    "number.min": "O campo preço deve ser maior que {#limit}",
     "number.precision": "O preço deve ter no máximo 2 casas decimais",
   }),
   quantity: Joi.number().integer().sign("positive").required().messages({
@@ -37,7 +37,7 @@ export const updateProductSchema = Joi.object({
     "string.max": "A deve ter no máximo {#limit} caracteres",
   }),
   price: Joi.number().min(0.01).precision(2).messages({
-    "number.min": "O campo preço deve ser maior que {#min}",
+    "number.min": "O campo preço deve ser maior que {#limit}",
     "number.precision": "O preço deve ter no máximo 2 casas decimais",
   }),
   quantity: Joi.number().integer().sign("positive").messages({
