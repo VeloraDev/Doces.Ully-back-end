@@ -1,6 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 
 export default defineConfig([
@@ -9,5 +9,6 @@ export default defineConfig([
   { files: ["**/*.{js,mjs,cjs}"], rules: {
     "no-unused-vars": "warn", 
     "semi": ["error", "always"],
-  } }
+  } },
+  globalIgnores(["tests/"])
 ]);
