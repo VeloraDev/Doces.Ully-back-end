@@ -1,3 +1,4 @@
+import { cookieConfig, deleteCookieConfig } from "../config/cookies.js";
 import AuthService from "../services/auth.service.js";
 
 export default class AuthController {
@@ -5,13 +6,7 @@ export default class AuthController {
     try {
       const { email, password } = req.body;
       const token = await AuthService.loginAdmin(email, password);
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,  
-        sameSite: "None",
-        maxAge: 604800000,
-        path: "/",
-      });
+      res.cookie("token", token, cookieConfig);
       res.status(200).json({ message: "Administrador logado com sucesso" });
     } catch (error) {
       next(error);
@@ -22,13 +17,7 @@ export default class AuthController {
     try {
       const { phone, password } = req.body;
       const token = await AuthService.loginClient(phone, password);
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,  
-        sameSite: "None",
-        maxAge: 604800000,
-        path: "/",
-      });
+      res.cookie("token", token, cookieConfig);
       res.status(200).json({ message: "Cliente logado com sucesso" });
     } catch (error) {
       next(error);
@@ -42,12 +31,7 @@ export default class AuthController {
       });
     }
 
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,  
-      sameSite: "None",
-      path: "/",
-    });
+    res.clearCookie("token", deleteCookieConfig);
     res.status(200).json({ message: "Logout efetuado com sucesso" });
   }
 }
