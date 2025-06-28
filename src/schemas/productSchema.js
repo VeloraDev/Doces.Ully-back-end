@@ -16,9 +16,9 @@ export const createProductSchema = Joi.object({
     "number.min": "O campo preço deve ser maior que {#limit}",
     "number.precision": "O preço deve ter no máximo 2 casas decimais",
   }),
-  quantity: Joi.number().integer().sign("positive").required().messages({
+  quantity: Joi.number().integer().min(0).required().messages({
     "any.required": "O campo 'quantity' é obrigatório",
-    "number.integer": "A quantidade deve ser um número inteiro",
+    "number.min": "A quantidade deve ser, no mínimo {#limit}",
     "number.positive": "A quantidade deve ser um número positivo",
   }),
   category_id: Joi.string().guid({ version: "uuidv4" }).required().messages({
@@ -40,8 +40,8 @@ export const updateProductSchema = Joi.object({
     "number.min": "O campo preço deve ser maior que {#limit}",
     "number.precision": "O preço deve ter no máximo 2 casas decimais",
   }),
-  quantity: Joi.number().integer().sign("positive").messages({
-    "number.integer": "A quantidade deve ser um número inteiro",
+  quantity: Joi.number().integer().min(0).messages({
+    "number.min": "A quantidade deve ser, no mínimo {#limit}",
     "number.positive": "A quantidade deve ser um número positivo",
   }),
   category_id: Joi.string().guid({ version: "uuidv4" }).messages({
